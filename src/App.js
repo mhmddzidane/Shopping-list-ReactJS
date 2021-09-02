@@ -1,9 +1,11 @@
 import {useState} from 'react'
-import classnames from 'classnames'
-import './App.css'
-import shoppingIcon from './assets/shopping-icon.svg'
-import plusIcon from './assets/plus-icon.svg'
-import minusIcon from './assets/minus-icon.svg'
+
+import Navbar from './components/navbar/index'
+import Container from './components/container'
+import SearchInput from './components/searchInput'
+import Info from './components/info'
+import Todos from './components/todos'
+import Empty from './components/empty'
 
 function App() {
   const [value, setValue] = useState('')
@@ -59,63 +61,33 @@ function App() {
 
   return (
     <>
-      <nav className="nav">
-        <img className="nav-icon" src={shoppingIcon} alt="shopping icon"/>
-        <h1 className="nav-title">Shopping List</h1>
-      </nav>
+     <Navbar></Navbar>
 
-      <section className="container">
-        <form className="form" onSubmit={handleSubmit}>
-          <input 
-            className="input" 
-            type="text" 
-            placeholder="List" 
-            onChange={(e) => {setValue(e.target.value)}} 
-            value={value}>
-          </input>
-          <button className="add-button" type="submit">Add</button>
-        </form>
+      <Container>
 
-        <div className="info">
-          <div className="info-total">
-            <p>{`Total List: ${todos.length}`}</p>
-          </div>
-          <div className="info-total">
-            <p>{`Total Counts: ${getTotalCounts()}`}</p>
-          </div>
-          <button className="delete-all-button" onClick={() => setTodos([])}>
-            Delete all
-          </button>
-        </div>
+        <SearchInput 
+          onSubmit={handleSubmit} 
+          onChange={(e) => setValue(e.target.value)} 
+          value={value}>
+        </SearchInput>
+
+        <Info
+          todosLength={todos.length}
+          totalCounts={getTotalCounts()}
+          onDelete={() => setTodos([])}
+          >
+        </Info>
 
         {todos.length > 0 ? (
-          <div className="todos">
-            {todos.map((todo, index, arr) => {
-              return (
-                <div key={index} className={`todo ${!(arr.length === index + 1) && 'todo-divider'}`}>
-
-                  {todo.title}
-
-                  <div className="todo-icon-wrapper">
-                    <div className="todo-count">{todo.count}</div>
-
-                    <button className="todo-action-button" onClick={() => handleSubstractionCount(index)}>
-                      <img src={minusIcon} alt="minus icon"></img>
-                    </button>
-
-                    <button className="todo-action-button" onClick={() => handleAdditionCount(index)}>
-                      <img src={plusIcon} alt="plus icon"></img>
-                    </button>
-                  </div>
-
-                </div>
-              )
-            } )}
-          </div>
+          <Todos
+            todos={todos}
+            onSubstraction={(index) => handleSubstractionCount(index)}
+            onAddition={(index) => handleAdditionCount(index)}
+          ></Todos>
          ) : (
-          <div>Empty List</div>
+          <Empty></Empty>
          )}
-      </section>
+      </Container>
     </>
   );
 }
